@@ -24,7 +24,7 @@
     <button onclick="searchLocation()">搜索</button>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.8.0/suncalc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/astronomyjs/1.2.1/astronomy.min.js"></script>
     <script>
         const map = L.map('map').setView([51.505, -0.09], 13);
 
@@ -65,16 +65,31 @@
             const lon = event.latlng.lng;
             const latDMS = formatDMS(lat);
             const lonDMS = formatDMS(lon);
-
-            // 計算月球升降時間和方位角
-            const times = SunCalc.getMoonTimes(new Date(), lat, lon);
-            const moonRiseTime = times.rise ? times.rise.toLocaleTimeString() : '未知';
-            const moonSetTime = times.set ? times.set.toLocaleTimeString() : '未知';
-            const moonAzimuth = SunCalc.getMoonPosition(new Date(), lat, lon).azimuth;
-
+            
+            const clickTime = new Date().toLocaleString();
+            
+            const julianDate = Astronomy.Conjunctions.julianDay(
+                new Date().getFullYear(),
+                new Date().getMonth() + 1,
+                new Date().getDate(),
+                new Date().getHours(),
+                new Date().getMinutes(),
+                new Date().getSeconds()
+            );
+            
+            const moonRiseSet = Astronomy.Moon.riseSet(julianDate, lat, lon);
+            
+            const popupContent = `
+                緯度: ${latDMS}<br>
+                經度: ${lonDMS}<br>
+                點擊時間: ${clickTime}<br>
+                月球升起時間: ${Astronomy.Format.time(moonRiseSet.rise)}<br>
+                月球落下時間: ${Astronomy.Format.time(moonRiseSet.set)}
+            `;
+            
             const popup = L.popup()
                 .setLatLng(event.latlng)
-                .setContent(`緯度: ${latDMS}<br>經度: ${lonDMS}<br>月球升起時間: ${moonRiseTime}<br>月球降落時間: ${moonSetTime}<br>月球方位角: ${moonAzimuth.toFixed(2)}°`)
+                .setContent(popupContent)
                 .openOn(map);
         });
     </script>
