@@ -1,32 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>OpenStreetMap 地圖</title>
-    <!-- 引入 Leaflet 库的 CSS 文件 -->
+    <title>OpenStreetMap 地圖與搜尋</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
-    <!-- 在这里创建地图容器 -->
     <div id="map" style="width: 800px; height: 600px;"></div>
+    <input type="text" id="searchInput" placeholder="搜尋地點">
+    <button onclick="searchLocation()">搜索</button>
 
-    <!-- 引入 Leaflet 库的 JavaScript 文件 -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // JavaScript 代码将在这里放置
+        const map = L.map('map').setView([51.505, -0.09], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // 添加標記
+        const marker = L.marker([51.5, -0.09]).addTo(map);
+
+        function searchLocation() {
+            const searchInput = document.getElementById('searchInput').value;
+            if (searchInput) {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${searchInput}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            const lat = parseFloat(data[0].lat);
+                            const lon = parseFloat(data[0].lon);
+                            map.setView([lat, lon], 13);
+                            marker.setLatLng([lat, lon]);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error searching location:', error);
+                    });
+            }
+        }
     </script>
 </body>
 </html>
-<script>
-    // 初始化地圖，設置中心點和縮放級別
-    const map = L.map('map').setView([51.505, -0.09], 13);
-
-    // 添加 OpenStreetMap 地圖圖層
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // 添加標記
-    L.marker([51.5, -0.09]).addTo(map)
-        .bindPopup('這是一個標記。')
-        .openPopup();
-</script>
