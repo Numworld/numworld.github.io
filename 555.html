@@ -38,12 +38,21 @@
             }
         }
 
+        function formatDMS(coord) {
+            const degrees = Math.floor(coord);
+            const minutes = Math.floor((coord - degrees) * 60);
+            const seconds = ((coord - degrees - minutes / 60) * 3600).toFixed(3);
+            return `${degrees}° ${minutes}' ${seconds}"`;
+        }
+
         map.on('click', function(event) {
             const lat = event.latlng.lat;
             const lon = event.latlng.lng;
+            const latDMS = formatDMS(lat);
+            const lonDMS = formatDMS(lon);
             const popup = L.popup()
                 .setLatLng(event.latlng)
-                .setContent(`緯度: ${lat}<br>經度: ${lon}`)
+                .setContent(`緯度: ${latDMS}<br>經度: ${lonDMS}`)
                 .openOn(map);
         });
     </script>
