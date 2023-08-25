@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
-    <div id="map" style="width: 800px; height: 600px;"></div>
+    <div id="map" style="width: 1000px; height: 800px;"></div>
     <input type="text" id="searchInput" placeholder="搜尋地點">
     <button onclick="searchLocation()">搜索</button>
 
@@ -38,7 +38,6 @@
             }
         }
 
-        // 在地圖上添加點擊事件監聽器
         map.on('click', function(event) {
             const lat = event.latlng.lat;
             const lon = event.latlng.lng;
