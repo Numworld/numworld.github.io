@@ -2,10 +2,24 @@
 <html>
 <head>
     <title>OpenStreetMap 地圖與搜尋</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        #map {
+            width: 80%;
+            height: 80vh;
+        }
+    </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
-    <div id="map" style="width: 1000px; height: 800px;"></div>
+    <div id="map"></div>
     <input type="text" id="searchInput" placeholder="搜尋地點">
     <button onclick="searchLocation()">搜索</button>
 
