@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenStreetMap 地圖</title>
+    <!-- 引入 Leaflet 库的 CSS 文件 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <!-- 在这里创建地图容器 -->
+    <div id="map" style="width: 800px; height: 600px;"></div>
+
+    <!-- 引入 Leaflet 库的 JavaScript 文件 -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // JavaScript 代码将在这里放置
+    </script>
+</body>
+</html>
+<script>
+    // 初始化地圖，設置中心點和縮放級別
+    const map = L.map('map').setView([51.505, -0.09], 13);
+
+    // 添加 OpenStreetMap 地圖圖層
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 添加標記
+    L.marker([51.5, -0.09]).addTo(map)
+        .bindPopup('這是一個標記。')
+        .openPopup();
+</script>
