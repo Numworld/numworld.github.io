@@ -17,7 +17,6 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // 添加標記
         const marker = L.marker([51.5, -0.09]).addTo(map);
 
         function searchLocation() {
@@ -38,6 +37,16 @@
                     });
             }
         }
+
+        // 在地圖上添加點擊事件監聽器
+        map.on('click', function(event) {
+            const lat = event.latlng.lat;
+            const lon = event.latlng.lng;
+            const popup = L.popup()
+                .setLatLng(event.latlng)
+                .setContent(`緯度: ${lat}<br>經度: ${lon}`)
+                .openOn(map);
+        });
     </script>
 </body>
 </html>
