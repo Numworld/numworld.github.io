@@ -23,20 +23,20 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
-        // Initialize the map
+        // 初始化地图
         var map = L.map('map').setView([51.505, -0.09], 2);
 
-        // Add OSM tile layer
+        // 添加OSM图层
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Add search box
+        // 添加搜索框
         L.Control.geocoder().addTo(map);
 
         var sunMarker, earthMarker, sunLatLng, earthLatLng;
 
-        // Set Sun position
+        // 设置太阳位置
         function setSunPosition(e) {
             if (sunMarker) {
                 map.removeLayer(sunMarker);
@@ -49,16 +49,17 @@
             sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
         }
 
-        // Set Earth position
+        // 设置地球位置
         function setEarthPosition(e) {
             if (earthMarker) {
                 map.removeLayer(earthMarker);
             }
             earthLatLng = e.latlng;
             earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindPopup('Earth').openPopup();
+            sunMarker.openPopup(); // 重新打开太阳的标签
         }
 
-        // Add click event listener
+        // 添加点击事件监听器
         map.on('click', function(e) {
             if (!sunLatLng) {
                 setSunPosition(e);
