@@ -16,6 +16,10 @@
             height: 100%;
             width: 100%;
         }
+        .leaflet-tooltip.my-tooltip-class {
+            font-size: 14px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -59,7 +63,8 @@
                 earthLatLng = null;
             }
             sunLatLng = e.latlng;
-            sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
+            sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map)
+                .bindTooltip('Sun', {permanent: true, direction: 'top', className: 'my-tooltip-class'}).openTooltip();
             removePlanetMarkers();
         }
 
@@ -69,7 +74,8 @@
                 map.removeLayer(earthMarker);
             }
             earthLatLng = e.latlng;
-            earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindPopup('Earth').openPopup();
+            earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map)
+                .bindTooltip('Earth', {permanent: true, direction: 'top', className: 'my-tooltip-class'}).openTooltip();
             placePlanets();
         }
 
@@ -96,7 +102,7 @@
                     var lat = sunLatLng.lat + dy * distance;
                     var lng = sunLatLng.lng + dx * distance;
                     var marker = L.marker([lat, lng], {title: planet}).addTo(map)
-                        .bindTooltip(planet, {permanent: true, direction: 'top'}).openTooltip();
+                        .bindTooltip(planet, {permanent: true, direction: 'top', className: 'my-tooltip-class'}).openTooltip();
                     planetMarkers.push(marker);
                 }
             }
