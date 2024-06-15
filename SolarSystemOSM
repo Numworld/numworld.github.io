@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar System on OSM</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        .leaflet-tooltip {
+            background-color: yellow; /* 更显眼的背景颜色 */
+            border: 2px solid black;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 40px; /* 更大的字体 */
+            font-weight: bold; /* 粗体 */
+            color: black; /* 字体颜色 */
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+        // 初始化地图
+        var map = L.map('map').setView([51.505, -0.09], 2);
+
+        // 添加OSM图层
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // 添加搜索框
+        L.Control.geocoder().addTo(map);
+
+        var sunMarker, earthMarker, sunLatLng, earthLatLng;
+        var planetMarkers = [];
+
+        // 行星距离比例（以地球为基准）
+        var planetDistances = {
+            Mercury: 0.39,
+            Venus: 0.72,
+            Earth: 1,
+            Mars: 1.52,
+            Jupiter: 5.2,
+            Saturn: 9.58,
+            Uranus: 19.22,
+            Neptune: 30.05
+        };
+
+        // 设置太阳位置
+        function setSunPosition(e) {
+            if (sunMarker) {
+                map.removeLayer(sunMarker);
+            }
+            if (earthMarker) {
+                map.removeLayer(earthMarker);
+                earthLatLng = null;
+            }
+            sunLatLng = e.latlng;
+            sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map)
+                .bindTooltip('Sun', {permanent: true, direction: 'top', className: 'leaflet-tooltip'}).openTooltip();
+            removePlanetMarkers();
+        }
+
+        // 设置地球位置
+        function setEarthPosition(e) {
+            if (earthMarker) {
+                map.removeLayer(earthMarker);
+            }
+            earthLatLng = e.latlng;
+            earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map)
+                .bindTooltip('Earth', {permanent: true, direction: 'top', className: 'leaflet-tooltip'}).openTooltip();
+            placePlanets();
+        }
+
+        // 移除所有行星标记
+        function removePlanetMarkers() {
+            planetMarkers.forEach(function(marker) {
+                map.removeLayer(marker);
+            });
+            planetMarkers = [];
+        }
+
+        // 放置行星标记
+        function placePlanets() {
+            if (!sunLatLng || !earthLatLng) {
+                return;
+            }
+
+            var dx = earthLatLng.lng - sunLatLng.lng;
+            var dy = earthLatLng.lat - sunLatLng.lat;
+
+            for (var planet in planetDistances) {
+                if (planet !== 'Earth') {
+                    var distance = planetDistances[planet];
+                    var lat = sunLatLng.lat + dy * distance;
+                    var lng = sunLatLng.lng + dx * distance;
+                    var marker = L.marker([lat, lng], {title: planet}).addTo(map)
+                        .bindTooltip(planet, {permanent: true, direction: 'top', className: 'leaflet-tooltip'}).openTooltip();
+                    planetMarkers.push(marker);
+                }
+            }
+        }
+
+        // 添加点击事件监听器
+        map.on('click', function(e) {
+            if (!sunLatLng) {
+                setSunPosition(e);
+            } else if (!earthLatLng) {
+                setEarthPosition(e);
+            } else {
+                setSunPosition(e);
+            }
+        });
+    </script>
+</body>
+</html>
