@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solar System on OSM</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <style>
         html, body {
             height: 100%;
@@ -29,6 +30,7 @@
     <div class="info">Click on the map to set the positions of the Sun and Earth.</div>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
         // 初始化地图
         var map = L.map('map').setView([51.505, -0.09], 2);
@@ -37,6 +39,9 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
+        // 添加搜索框
+        L.Control.geocoder().addTo(map);
 
         var sunMarker, earthMarker, sunLatLng, earthLatLng;
 
