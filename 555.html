@@ -21,7 +21,7 @@
             border: 2px solid black;
             border-radius: 5px;
             padding: 5px 10px;
-            font-size: 40px; /* 更大的字体 */
+            font-size: 50px; /* 更大的字体 */
             font-weight: bold; /* 粗体 */
             color: black; /* 字体颜色 */
         }
@@ -32,8 +32,8 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
-        // 初始化地图
-        var map = L.map('map').setView([51.505, -0.09], 2);
+        // 初始化地图，中心点为台湾海峡地区，缩放级别为7
+        var map = L.map('map').setView([23.5, 119.5], 7);
 
         // 添加OSM图层
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
