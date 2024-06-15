@@ -50,6 +50,10 @@
             if (sunMarker) {
                 map.removeLayer(sunMarker);
             }
+            if (earthMarker) {
+                map.removeLayer(earthMarker);
+                earthLatLng = null;
+            }
             sunLatLng = e.latlng;
             sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
         }
@@ -69,6 +73,8 @@
                 setSunPosition(e);
             } else if (!earthLatLng) {
                 setEarthPosition(e);
+            } else {
+                setSunPosition(e);
             }
         });
     </script>
