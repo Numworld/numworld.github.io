@@ -47,7 +47,6 @@
             }
             sunLatLng = e.latlng;
             sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
-            sunMarker.openPopup();
         }
 
         // 设置地球位置
@@ -57,7 +56,7 @@
             }
             earthLatLng = e.latlng;
             earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindPopup('Earth').openPopup();
-            sunMarker.openPopup(); // 确保太阳标签保持显示状态
+            sunMarker.openPopup(); // 保持太阳的名字标签显示
         }
 
         // 添加点击事件监听器
