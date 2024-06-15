@@ -35,7 +35,7 @@
         L.Control.geocoder().addTo(map);
 
         var sunMarker, earthMarker, sunLatLng, earthLatLng;
-        var planetLayerGroup = L.layerGroup().addTo(map);
+        var planetMarkers = [];
 
         // 行星距离比例（以地球为基准）
         var planetDistances = {
@@ -75,7 +75,10 @@
 
         // 移除所有行星标记
         function removePlanetMarkers() {
-            planetLayerGroup.clearLayers();
+            planetMarkers.forEach(function(marker) {
+                map.removeLayer(marker);
+            });
+            planetMarkers = [];
         }
 
         // 放置行星标记
@@ -86,18 +89,16 @@
 
             var dx = earthLatLng.lng - sunLatLng.lng;
             var dy = earthLatLng.lat - sunLatLng.lat;
-            var bounds = L.latLngBounds(sunLatLng, earthLatLng);
 
             for (var planet in planetDistances) {
                 if (planet !== 'Earth') {
                     var distance = planetDistances[planet];
                     var lat = sunLatLng.lat + dy * distance;
                     var lng = sunLatLng.lng + dx * distance;
-                    var marker = L.marker([lat, lng], {title: planet}).addTo(planetLayerGroup).bindPopup(planet).openPopup();
-                    bounds.extend([lat, lng]);
+                    var marker = L.marker([lat, lng], {title: planet}).addTo(map).bindPopup(planet).openPopup();
+                    planetMarkers.push(marker);
                 }
             }
-            map.fitBounds(bounds);
         }
 
         // 添加点击事件监听器
