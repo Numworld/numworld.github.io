@@ -42,6 +42,7 @@
 
         // 太阳系行星数据（平均距离太阳的距离，单位：百万公里）
         var planets = [
+            { name: 'Sun', distance: 0 },
             { name: 'Mercury', distance: 57.9 },
             { name: 'Venus', distance: 108.2 },
             { name: 'Earth', distance: 149.6 },
@@ -62,10 +63,7 @@
             }
             sunLatLng = e.latlng;
             sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
-
-            if (sunLatLng && earthLatLng) {
-                showPlanetPositions();
-            }
+            checkAndShowPlanets();
         }
 
         // 设置地球位置
@@ -75,7 +73,11 @@
             }
             earthLatLng = e.latlng;
             earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindPopup('Earth').openPopup();
+            checkAndShowPlanets();
+        }
 
+        // 检查是否已经设置了太阳和地球的位置
+        function checkAndShowPlanets() {
             if (sunLatLng && earthLatLng) {
                 showPlanetPositions();
             }
@@ -84,7 +86,7 @@
         // 显示行星位置
         function showPlanetPositions() {
             var earthDistance = map.distance(sunLatLng, earthLatLng); // 地球到太阳的距离
-            scaleFactor = earthDistance / planets[2].distance; // 按照地球-太阳距离进行比例缩放
+            scaleFactor = earthDistance / planets[3].distance; // 按照地球-太阳距离进行比例缩放
 
             // 清除之前的行星标记
             map.eachLayer(function (layer) {
@@ -95,17 +97,15 @@
 
             // 添加行星标记
             planets.forEach(function (planet) {
-                if (planet.name !== "Earth") {
-                    var distance = planet.distance * scaleFactor;
-                    var angle = Math.random() * 2 * Math.PI;
-                    var offsetX = distance * Math.cos(angle);
-                    var offsetY = distance * Math.sin(angle);
+                var distance = planet.distance * scaleFactor;
+                var angle = Math.random() * 2 * Math.PI;
+                var offsetX = distance * Math.cos(angle);
+                var offsetY = distance * Math.sin(angle);
 
-                    var planetLatLng = L.latLng(sunLatLng.lat + (offsetY / 111.32), 
-                                                sunLatLng.lng + (offsetX / (111.32 * Math.cos(sunLatLng.lat * Math.PI / 180))));
+                var planetLatLng = L.latLng(sunLatLng.lat + (offsetY / 111.32), 
+                                            sunLatLng.lng + (offsetX / (111.32 * Math.cos(sunLatLng.lat * Math.PI / 180))));
 
-                    L.marker(planetLatLng).addTo(map).bindPopup(planet.name);
-                }
+                L.marker(planetLatLng).addTo(map).bindPopup(planet.name);
             });
         }
 
