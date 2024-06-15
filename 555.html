@@ -17,18 +17,31 @@
             width: 100%;
         }
         .leaflet-tooltip {
-            background-color: yellow; /* 更显眼的背景颜色 */
+            background-color: yellow;
             border: 2px solid black;
             border-radius: 5px;
             padding: 5px 10px;
-            font-size: 50px; /* 更大的字体 */
-            font-weight: bold; /* 粗体 */
-            color: black; /* 字体颜色 */
+            font-size: 50px;
+            font-weight: bold;
+            color: black;
+        }
+        #cancelButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
+    <button id="cancelButton">取消</button>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
@@ -122,6 +135,21 @@
             } else {
                 setSunPosition(e);
             }
+        });
+
+        // 取消按钮点击事件
+        document.getElementById('cancelButton').addEventListener('click', function() {
+            if (sunMarker) {
+                map.removeLayer(sunMarker);
+                sunMarker = null;
+                sunLatLng = null;
+            }
+            if (earthMarker) {
+                map.removeLayer(earthMarker);
+                earthMarker = null;
+                earthLatLng = null;
+            }
+            removePlanetMarkers();
         });
     </script>
 </body>
