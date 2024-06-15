@@ -35,6 +35,17 @@
         L.Control.geocoder().addTo(map);
 
         var sunMarker, earthMarker, sunLatLng, earthLatLng;
+        var planetMarkers = [];
+
+        // 行星距离比例（以地球为基准）
+        var planetDistances = {
+            Mercury: 0.39,
+            Venus: 0.72,
+            Earth: 1,
+            Mars: 1.52,
+            Jupiter: 5.2,
+            Saturn: 9.58
+        };
 
         // 设置太阳位置
         function setSunPosition(e) {
@@ -47,6 +58,7 @@
             }
             sunLatLng = e.latlng;
             sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
+            removePlanetMarkers();
         }
 
         // 设置地球位置
@@ -56,6 +68,35 @@
             }
             earthLatLng = e.latlng;
             earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindPopup('Earth').openPopup();
+            placePlanets();
+        }
+
+        // 移除所有行星标记
+        function removePlanetMarkers() {
+            planetMarkers.forEach(function(marker) {
+                map.removeLayer(marker);
+            });
+            planetMarkers = [];
+        }
+
+        // 放置行星标记
+        function placePlanets() {
+            if (!sunLatLng || !earthLatLng) {
+                return;
+            }
+
+            var dx = earthLatLng.lng - sunLatLng.lng;
+            var dy = earthLatLng.lat - sunLatLng.lat;
+
+            for (var planet in planetDistances) {
+                if (planet !== 'Earth') {
+                    var distance = planetDistances[planet];
+                    var lat = sunLatLng.lat + dy * distance;
+                    var lng = sunLatLng.lng + dx * distance;
+                    var marker = L.marker([lat, lng], {title: planet}).addTo(map).bindPopup(planet).openPopup();
+                    planetMarkers.push(marker);
+                }
+            }
         }
 
         // 添加点击事件监听器
