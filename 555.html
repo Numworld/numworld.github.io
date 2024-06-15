@@ -34,11 +34,8 @@
         // 添加搜索框
         L.Control.geocoder().addTo(map);
 
-        // 添加比例尺
-        L.control.scale().addTo(map);
-
         var sunMarker, earthMarker, sunLatLng, earthLatLng;
-        var planetMarkers = [];
+        var planetLayerGroup = L.layerGroup().addTo(map);
 
         // 行星距离比例（以地球为基准）
         var planetDistances = {
@@ -52,18 +49,6 @@
             Neptune: 30.05
         };
 
-        // 行星图标
-        var planetIcons = {
-            Mercury: L.icon({ iconUrl: 'mercury.png', iconSize: [24, 24] }),
-            Venus: L.icon({ iconUrl: 'venus.png', iconSize: [24, 24] }),
-            Earth: L.icon({ iconUrl: 'earth.png', iconSize: [24, 24] }),
-            Mars: L.icon({ iconUrl: 'mars.png', iconSize: [24, 24] }),
-            Jupiter: L.icon({ iconUrl: 'jupiter.png', iconSize: [24, 24] }),
-            Saturn: L.icon({ iconUrl: 'saturn.png', iconSize: [24, 24] }),
-            Uranus: L.icon({ iconUrl: 'uranus.png', iconSize: [24, 24] }),
-            Neptune: L.icon({ iconUrl: 'neptune.png', iconSize: [24, 24] })
-        };
-
         // 设置太阳位置
         function setSunPosition(e) {
             if (sunMarker) {
@@ -74,7 +59,7 @@
                 earthLatLng = null;
             }
             sunLatLng = e.latlng;
-            sunMarker = L.marker(sunLatLng, { title: "Sun" }).addTo(map).bindPopup('Sun').openPopup();
+            sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
             removePlanetMarkers();
         }
 
@@ -84,16 +69,13 @@
                 map.removeLayer(earthMarker);
             }
             earthLatLng = e.latlng;
-            earthMarker = L.marker(earthLatLng, { icon: planetIcons['Earth'], title: "Earth" }).addTo(map).bindPopup('Earth').openPopup();
+            earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindPopup('Earth').openPopup();
             placePlanets();
         }
 
         // 移除所有行星标记
         function removePlanetMarkers() {
-            planetMarkers.forEach(function (marker) {
-                map.removeLayer(marker);
-            });
-            planetMarkers = [];
+            planetLayerGroup.clearLayers();
         }
 
         // 放置行星标记
@@ -104,20 +86,22 @@
 
             var dx = earthLatLng.lng - sunLatLng.lng;
             var dy = earthLatLng.lat - sunLatLng.lat;
+            var bounds = L.latLngBounds(sunLatLng, earthLatLng);
 
             for (var planet in planetDistances) {
                 if (planet !== 'Earth') {
                     var distance = planetDistances[planet];
                     var lat = sunLatLng.lat + dy * distance;
                     var lng = sunLatLng.lng + dx * distance;
-                    var marker = L.marker([lat, lng], { icon: planetIcons[planet], title: planet }).addTo(map).bindPopup(planet).openPopup();
-                    planetMarkers.push(marker);
+                    var marker = L.marker([lat, lng], {title: planet}).addTo(planetLayerGroup).bindPopup(planet).openPopup();
+                    bounds.extend([lat, lng]);
                 }
             }
+            map.fitBounds(bounds);
         }
 
         // 添加点击事件监听器
-        map.on('click', function (e) {
+        map.on('click', function(e) {
             if (!sunLatLng) {
                 setSunPosition(e);
             } else if (!earthLatLng) {
