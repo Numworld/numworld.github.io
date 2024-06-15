@@ -59,7 +59,7 @@
                 earthLatLng = null;
             }
             sunLatLng = e.latlng;
-            sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindTooltip('Sun').openTooltip();
+            sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
             removePlanetMarkers();
         }
 
@@ -69,7 +69,7 @@
                 map.removeLayer(earthMarker);
             }
             earthLatLng = e.latlng;
-            earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindTooltip('Earth').openTooltip();
+            earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindPopup('Earth').openPopup();
             placePlanets();
         }
 
@@ -95,7 +95,8 @@
                     var distance = planetDistances[planet];
                     var lat = sunLatLng.lat + dy * distance;
                     var lng = sunLatLng.lng + dx * distance;
-                    var marker = L.marker([lat, lng], {title: planet}).addTo(map).bindTooltip(planet).openTooltip();
+                    var marker = L.marker([lat, lng], {title: planet}).addTo(map)
+                        .bindTooltip(planet, {permanent: true, direction: 'top'}).openTooltip();
                     planetMarkers.push(marker);
                 }
             }
