@@ -6,14 +6,27 @@
     <title>Solar System on OSM</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         #map {
-            height: 600px;
+            height: 100%;
             width: 100%;
+        }
+        .info {
+            background: white;
+            padding: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
-    <h1>Solar System on OSM</h1>
+    <div class="info">Click on the map to set the positions of the Sun and Earth.</div>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -24,6 +37,8 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
+        var sunMarker, earthMarker, sunLatLng, earthLatLng;
 
         // 太阳系行星数据（平均距离太阳的距离，单位：百万公里）
         var planets = [
@@ -37,42 +52,71 @@
             { name: 'Neptune', distance: 4497.1 }
         ];
 
-        // 地球半径，单位：公里
-        var earthRadius = 6371;
-
         // 比例系数，用于将行星的平均距离转换为地球上的距离
-        var scaleFactor = 1e-6;
+        var scaleFactor;
 
-        // 点击地图事件处理函数
-        function onMapClick(e) {
-            var baseLatLng = e.latlng;
+        // 设置太阳位置
+        function setSunPosition(e) {
+            if (sunMarker) {
+                map.removeLayer(sunMarker);
+            }
+            sunLatLng = e.latlng;
+            sunMarker = L.marker(sunLatLng, {title: "Sun"}).addTo(map).bindPopup('Sun').openPopup();
+
+            if (sunLatLng && earthLatLng) {
+                showPlanetPositions();
+            }
+        }
+
+        // 设置地球位置
+        function setEarthPosition(e) {
+            if (earthMarker) {
+                map.removeLayer(earthMarker);
+            }
+            earthLatLng = e.latlng;
+            earthMarker = L.marker(earthLatLng, {title: "Earth"}).addTo(map).bindPopup('Earth').openPopup();
+
+            if (sunLatLng && earthLatLng) {
+                showPlanetPositions();
+            }
+        }
+
+        // 显示行星位置
+        function showPlanetPositions() {
+            var earthDistance = map.distance(sunLatLng, earthLatLng); // 地球到太阳的距离
+            scaleFactor = earthDistance / planets[2].distance; // 按照地球-太阳距离进行比例缩放
 
             // 清除之前的行星标记
             map.eachLayer(function (layer) {
-                if (layer instanceof L.Marker && layer !== baseMarker) {
+                if (layer instanceof L.Marker && layer !== sunMarker && layer !== earthMarker) {
                     map.removeLayer(layer);
                 }
             });
 
             // 添加行星标记
             planets.forEach(function (planet) {
-                var distance = planet.distance * scaleFactor * earthRadius;
-                var angle = Math.random() * 2 * Math.PI;
-                var offsetX = distance * Math.cos(angle);
-                var offsetY = distance * Math.sin(angle);
+                if (planet.name !== "Earth") {
+                    var distance = planet.distance * scaleFactor;
+                    var angle = Math.random() * 2 * Math.PI;
+                    var offsetX = distance * Math.cos(angle);
+                    var offsetY = distance * Math.sin(angle);
 
-                var planetLatLng = L.latLng(baseLatLng.lat + (offsetY / earthRadius) * (180 / Math.PI), 
-                                            baseLatLng.lng + (offsetX / earthRadius) * (180 / Math.PI) / Math.cos(baseLatLng.lat * Math.PI / 180));
+                    var planetLatLng = L.latLng(sunLatLng.lat + (offsetY / 111.32), 
+                                                sunLatLng.lng + (offsetX / (111.32 * Math.cos(sunLatLng.lat * Math.PI / 180))));
 
-                L.marker(planetLatLng).addTo(map).bindPopup(planet.name);
+                    L.marker(planetLatLng).addTo(map).bindPopup(planet.name);
+                }
             });
         }
 
         // 添加点击事件监听器
-        map.on('click', onMapClick);
-
-        // 初始化一个基本标记（例如，地球）
-        var baseMarker = L.marker([51.505, -0.09]).addTo(map).bindPopup('Earth').openPopup();
+        map.on('click', function(e) {
+            if (!sunLatLng) {
+                setSunPosition(e);
+            } else if (!earthLatLng) {
+                setEarthPosition(e);
+            }
+        });
     </script>
 </body>
 </html>
