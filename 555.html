@@ -101,19 +101,6 @@
             }
         }
 
-        // 保持所有弹出窗口始终打开
-        function keepPopupsOpen() {
-            if (sunMarker) {
-                sunMarker.openPopup();
-            }
-            if (earthMarker) {
-                earthMarker.openPopup();
-            }
-            planetMarkers.forEach(function(marker) {
-                marker.openPopup();
-            });
-        }
-
         // 添加点击事件监听器
         map.on('click', function(e) {
             if (!sunLatLng) {
@@ -123,12 +110,6 @@
             } else {
                 setSunPosition(e);
             }
-            keepPopupsOpen(); // 确保弹出窗口保持打开
-        });
-
-        // 每次地图移动结束时，重新打开所有弹出窗口
-        map.on('moveend', function() {
-            keepPopupsOpen();
         });
     </script>
 </body>
