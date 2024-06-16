@@ -32,11 +32,14 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
+        // 请替换为你自己的高德地图API密钥
+        var gaodeMapKey = 'YOUR_GAODE_MAP_KEY_HERE';
+
         // 初始化地图，中心点为台湾海峡地区，缩放级别为7
         var map = L.map('map').setView([23.5, 119.5], 7);
 
         // 添加高德地图图层
-        L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scl=1&style=7&x={x}&y={y}&z={z}', {
+        L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scl=1&style=7&x={x}&y={y}&z={z}&key=' + gaodeMapKey, {
             subdomains: '1234',
             attribution: '&copy; <a href="https://www.amap.com/">高德地图</a>'
         }).addTo(map);
